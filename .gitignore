@@ -1,0 +1,9 @@
+.env
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
+# Qdrant local storage
+qdrant_storage/
+# Ingestion progress
+ingestion_progress.json
