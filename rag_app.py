@@ -25,8 +25,13 @@ def get_secret(key):
             pass
     return value
 
+GOOGLE_API_KEY = get_secret('GOOGLE_API_KEY')
+
 # Initialize Embeddings
-embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview")
+embeddings = GoogleGenerativeAIEmbeddings(
+    model="models/embedding-001",
+    google_api_key=GOOGLE_API_KEY,
+)
 
 # Qdrant Cloud connection details
 QDRANT_URL = get_secret('QDRANT_URL')
@@ -47,9 +52,8 @@ qdrant = QdrantVectorStore(
 )
 
 # Initialize OpenAI Client (using Gemini API)
-SECRET_KEY = get_secret('GOOGLE_API_KEY')
 client = OpenAI(
-    api_key=SECRET_KEY,
+    api_key=GOOGLE_API_KEY,
     base_url="https://generativelanguage.googleapis.com/v1beta/"
 )
 
@@ -78,7 +82,6 @@ if user_query := st.chat_input("Ask a question about your documents..."):
         try:
 
             with st.spinner("Searching documents..."):
-                # Use MMR for diverse, high-quality retrieval (catches deeper concepts)
                 results = qdrant.max_marginal_relevance_search(
                     user_query, k=6, fetch_k=20, lambda_mult=0.7
                 )
