@@ -1,6 +1,5 @@
 import streamlit as st
 import os
-from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
@@ -9,14 +8,29 @@ from openai import OpenAI
 # -------------------------------------------------------------------
 # 1. Initialization (Runs on every user interaction)
 # -------------------------------------------------------------------
-load_dotenv()
+# Load .env for local development (gracefully skipped on Streamlit Cloud)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
+
+def get_secret(key):
+    """Get secret: .env (local) -> st.secrets (Streamlit Cloud)."""
+    value = os.getenv(key)
+    if value is None:
+        try:
+            value = st.secrets[key]
+        except Exception:
+            pass
+    return value
 
 # Initialize Embeddings
 embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview")
 
 # Qdrant Cloud connection details
-QDRANT_URL = os.getenv('QDRANT_URL')
-QDRANT_API_KEY = os.getenv('QDRANT_API_KEY')
+QDRANT_URL = get_secret('QDRANT_URL')
+QDRANT_API_KEY = get_secret('QDRANT_API_KEY')
 
 # Create raw Qdrant client (no embedding API calls)
 raw_qdrant_client = QdrantClient(
@@ -33,7 +47,7 @@ qdrant = QdrantVectorStore(
 )
 
 # Initialize OpenAI Client (using Gemini API)
-SECRET_KEY = os.getenv('GOOGLE_API_KEY')
+SECRET_KEY = get_secret('GOOGLE_API_KEY')
 client = OpenAI(
     api_key=SECRET_KEY,
     base_url="https://generativelanguage.googleapis.com/v1beta/"
