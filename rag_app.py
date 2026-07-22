@@ -9,7 +9,11 @@ from openai import OpenAI
 # -------------------------------------------------------------------
 # 1. Initialization (Runs on every user interaction)
 # -------------------------------------------------------------------
-load_dotenv()
+try:
+    from dotenv import load_dotenv  # safe import
+    load_dotenv()                    # safe to run
+except Exception:
+    pass 
 
 # Initialize Embeddings
 embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview")
