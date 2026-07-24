@@ -1,4 +1,3 @@
-
 from dotenv import load_dotenv
 import os
 
@@ -59,4 +58,5 @@ for i in range(0, len(texts), BATCH_SIZE):
         time.sleep(15)
 
 print(f"✅ {len(texts)} chunks stored in Qdrant Cloud at '{QDRANT_URL}'")
+
 
