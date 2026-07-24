@@ -104,7 +104,7 @@ if user_query := st.chat_input("Ask a question about your documents..."):
 
             with st.spinner("Generating answer..."):
                 response = client.chat.completions.create(
-                    model="gemini-1.5-flash",
+                    model="gemini-2.0-flash",
                     n=1,
                     temperature=0.3,
                     messages=[
@@ -119,4 +119,3 @@ if user_query := st.chat_input("Ask a question about your documents..."):
 
         except Exception as e:
             st.error(f"An error occurred: {e}")
-
